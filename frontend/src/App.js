@@ -11,7 +11,7 @@ function App() {
   const [isDayTime, setIsDayTime] = useState(true);
   const [coords, setCoords] = useState(null);
 
-  const API_URL = 'http://localhost:5000/weather/full';
+  const API_URL = 'https://nadavecomnada.onrender.com';
 
   // O fetchWeather está agora em uma função separada para ser chamado por outros eventos
   const fetchWeather = async (cityName) => {
