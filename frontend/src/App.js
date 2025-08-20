@@ -111,7 +111,7 @@ function App() {
           />
           <button type="submit">Buscar</button>
         </form>
-        <button onClick={() => fetchWeather(city)} className="geolocation-button">Usar minha localização</button>
+        <button type="button" onClick={fetchGeoLocation} className="geolocation-button">Usar minha localização</button>
       </div>
 
       {loading && (
