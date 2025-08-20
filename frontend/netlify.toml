@@ -1,6 +1,6 @@
 [build]
-  publish = "build" # Make sure this points to your build folder
-  command = "npm run build" # Adjust this if your build command is different
+  publish = "build"
+  command = "npm install && npm run build"
 
 [[redirects]]
   from = "/*"
