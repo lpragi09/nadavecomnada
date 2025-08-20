@@ -46,8 +46,8 @@ function App() {
 
       const { latitude, longitude, city: ipCity } = geoResponse.data;
 
-      // Chama o backend com as coordenadas obtidas
-      const response = await axios.get(`${API_URL}/coords?lat=${latitude}&lon=${longitude}`);
+      // Chama o backend com o nome da cidade obtida do IP
+      const response = await axios.get(`${API_URL}/${ipCity}`);
 
       setWeatherData(response.data);
       setCity(ipCity); // Define a cidade a partir da resposta da API de IP
