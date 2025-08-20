@@ -15,7 +15,7 @@ const API_KEY = process.env.OPENWEATHER_API_KEY;
 app.get('/weather/full/:city', async (req, res) => {
   const city = req.params.city;
   const urlCurrent = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=pt_br`;
-  const urlForecast = `
+  const urlForecast = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`;
 
   try {
     const [currentWeatherRes, forecastRes] = await Promise.all([
