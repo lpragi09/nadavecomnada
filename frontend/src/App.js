@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { DotLoader } from 'react-spinners';
 import './App.css';
@@ -11,9 +11,9 @@ function App() {
   const [isDayTime, setIsDayTime] = useState(true);
   const [coords, setCoords] = useState(null);
 
-  const API_URL = 'https://nadavecomnada.onrender.com/weather/full';
+  const API_URL = 'https://nadavecomnada.onrender.com/weather/full'; // A URL do seu backend no Render
 
-  // O fetchWeather está agora em uma função separada para ser chamado por outros eventos
+  // A função fetchWeather é mantida fora do useEffect
   const fetchWeather = async (cityName) => {
     setLoading(true);
     setError('');
@@ -35,45 +35,40 @@ function App() {
     }
   };
 
-  // A lógica de geolocalização foi movida para dentro do useEffect
-  useEffect(() => {
-    const fetchGeoLocation = async () => {
+  // A função fetchGeoLocation foi movida para fora do useEffect e envolvida em useCallback
+  const fetchGeoLocation = useCallback(async () => {
     if (navigator.geolocation) {
       setLoading(true);
       navigator.geolocation.getCurrentPosition(
         async (position) => {
-          // Adicione este log para ver a latitude e longitude
-          console.log('Posição obtida:', position.coords.latitude, position.coords.longitude);
-
           try {
             const response = await axios.get(`${API_URL}/coords?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-
-            // ... (restante do código)
-
-              setWeatherData(response.data);
-              setCity(response.data.current.name);
-              checkDayTime(response.data.current.dt, response.data.current.timezone);
-              setCoords({
-                lat: response.data.current.coord.lat,
-                lon: response.data.current.coord.lon
-              });
-            } catch (err) {
-              setError('Não foi possível obter sua localização. Por favor, tente buscar uma cidade.');
-              setLoading(false);
-            }
-          },
-          () => {
-            setError('Permissão de geolocalização negada. Por favor, tente buscar uma cidade.');
+            setWeatherData(response.data);
+            setCity(response.data.current.name);
+            checkDayTime(response.data.current.dt, response.data.current.timezone);
+            setCoords({
+              lat: response.data.current.coord.lat,
+              lon: response.data.current.coord.lon
+            });
+          } catch (err) {
+            setError('Não foi possível obter sua localização. Por favor, tente buscar uma cidade.');
             setLoading(false);
           }
-        );
-      } else {
-        setError('Geolocalização não é suportada pelo seu navegador.');
-      }
-    };
+        },
+        () => {
+          setError('Permissão de geolocalização negada. Por favor, tente buscar uma cidade.');
+          setLoading(false);
+        }
+      );
+    } else {
+      setError('Geolocalização não é suportada pelo seu navegador.');
+    }
+  }, [API_URL]); // Agora ela depende da API_URL
 
+  // O useEffect agora só chama a função
+  useEffect(() => {
     fetchGeoLocation();
-  }, [API_URL]); // Agora o useEffect depende de API_URL
+  }, [fetchGeoLocation]); // E o useEffect agora depende de fetchGeoLocation
 
   const checkDayTime = (timestamp, timezone) => {
     const date = new Date((timestamp + timezone) * 1000);
@@ -111,7 +106,7 @@ function App() {
           />
           <button type="submit">Buscar</button>
         </form>
-        <button onClick={() => fetchWeather(city)} className="geolocation-button">Usar minha localização</button>
+        <button type="button" onClick={fetchGeoLocation} className="geolocation-button">Usar minha localização</button>
       </div>
 
       {loading && (
@@ -120,7 +115,11 @@ function App() {
         </div>
       )}
 
-      {error && !loading && <p className="error">{error}</p>}
+      {error && !loading && (
+        <div className="error-container">
+          <p className="error">{error}</p>
+        </div>
+      )}
 
       {weatherData && !loading && (
         <div className="weather-data">
