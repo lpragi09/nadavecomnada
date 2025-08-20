@@ -46,7 +46,7 @@ function App() {
           console.log('Posição obtida:', position.coords.latitude, position.coords.longitude);
 
           try {
-            const response = await axios.get(`${API_URL}/coords?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+            const response = await axios.get(`https://nadavecomnada.onrender.com/weather/full/coords?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
 
             // ... (restante do código)
 
