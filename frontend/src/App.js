@@ -13,44 +13,7 @@ function App() {
 
   const API_URL = 'http://localhost:5000/weather/full';
 
-  // Nova função para lidar com a requisição de geolocalização
-  const fetchGeoLocation = async () => {
-    if (navigator.geolocation) {
-      setLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            // Chama o backend com as coordenadas, sem expor a API Key
-            const response = await axios.get(`${API_URL}/coords?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-
-            // O backend retorna a resposta completa
-            setWeatherData(response.data);
-            setCity(response.data.current.name);
-            checkDayTime(response.data.current.dt, response.data.current.timezone);
-            setCoords({
-              lat: response.data.current.coord.lat,
-              lon: response.data.current.coord.lon
-            });
-          } catch (err) {
-            setError('Não foi possível obter sua localização. Por favor, tente buscar uma cidade.');
-            setLoading(false);
-          }
-        },
-        () => {
-          setError('Permissão de geolocalização negada. Por favor, tente buscar uma cidade.');
-          setLoading(false);
-        }
-      );
-    } else {
-      setError('Geolocalização não é suportada pelo seu navegador.');
-    }
-  };
-
-  // Executa a geolocalização ao carregar a página
-  useEffect(() => {
-    fetchGeoLocation();
-  }, []);
-
+  // O fetchWeather está agora em uma função separada para ser chamado por outros eventos
   const fetchWeather = async (cityName) => {
     setLoading(true);
     setError('');
@@ -71,6 +34,42 @@ function App() {
       setLoading(false);
     }
   };
+
+  // A lógica de geolocalização foi movida para dentro do useEffect
+  useEffect(() => {
+    const fetchGeoLocation = async () => {
+      if (navigator.geolocation) {
+        setLoading(true);
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            try {
+              // Chama o backend com as coordenadas, sem expor a API Key
+              const response = await axios.get(`${API_URL}/coords?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+
+              setWeatherData(response.data);
+              setCity(response.data.current.name);
+              checkDayTime(response.data.current.dt, response.data.current.timezone);
+              setCoords({
+                lat: response.data.current.coord.lat,
+                lon: response.data.current.coord.lon
+              });
+            } catch (err) {
+              setError('Não foi possível obter sua localização. Por favor, tente buscar uma cidade.');
+              setLoading(false);
+            }
+          },
+          () => {
+            setError('Permissão de geolocalização negada. Por favor, tente buscar uma cidade.');
+            setLoading(false);
+          }
+        );
+      } else {
+        setError('Geolocalização não é suportada pelo seu navegador.');
+      }
+    };
+
+    fetchGeoLocation();
+  }, [API_URL]); // Agora o useEffect depende de API_URL
 
   const checkDayTime = (timestamp, timezone) => {
     const date = new Date((timestamp + timezone) * 1000);
@@ -108,7 +107,7 @@ function App() {
           />
           <button type="submit">Buscar</button>
         </form>
-        <button onClick={fetchGeoLocation} className="geolocation-button">Usar minha localização</button>
+        <button onClick={() => fetchWeather(city)} className="geolocation-button">Usar minha localização</button>
       </div>
 
       {loading && (
