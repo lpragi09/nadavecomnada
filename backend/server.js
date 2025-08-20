@@ -45,9 +45,6 @@ app.get('/weather/full/coords', async (req, res) => {
   const lat = req.query.lat;
   const lon = req.query.lon;
 
-  // Adicione este log para ver o que o backend recebeu
-  console.log('Backend recebeu coordenadas:', lat, lon);
-
   try {
     const urlCurrent = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=pt_br`;
     const urlForecast = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
