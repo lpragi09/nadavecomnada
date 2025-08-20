@@ -38,13 +38,17 @@ function App() {
   // A lógica de geolocalização foi movida para dentro do useEffect
   useEffect(() => {
     const fetchGeoLocation = async () => {
-      if (navigator.geolocation) {
-        setLoading(true);
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            try {
-              // Chama o backend com as coordenadas, sem expor a API Key
-              const response = await axios.get(`${API_URL}/coords?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+    if (navigator.geolocation) {
+      setLoading(true);
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          // Adicione este log para ver a latitude e longitude
+          console.log('Posição obtida:', position.coords.latitude, position.coords.longitude);
+
+          try {
+            const response = await axios.get(`${API_URL}/coords?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
+
+            // ... (restante do código)
 
               setWeatherData(response.data);
               setCity(response.data.current.name);
