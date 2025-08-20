@@ -48,12 +48,10 @@ app.get('/weather/full/coords', async (req, res) => {
   // Adicione este log para ver o que o backend recebeu
   console.log('Backend recebeu coordenadas:', lat, lon);
 
-  const urlCurrent = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=pt_br`;
-  const urlForecast = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
-
-  // ... (restante do código)
-
   try {
+    const urlCurrent = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=pt_br`;
+    const urlForecast = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+
     const [currentWeatherRes, forecastRes] = await Promise.all([
       axios.get(urlCurrent),
       axios.get(urlForecast)
