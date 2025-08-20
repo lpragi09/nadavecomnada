@@ -13,7 +13,6 @@ function App() {
 
   const API_URL = 'https://nadavecomnada.onrender.com/weather/full'; // A URL do seu backend no Render
 
-  // A função fetchWeather é mantida fora do useEffect
   const fetchWeather = async (cityName) => {
     setLoading(true);
     setError('');
@@ -35,40 +34,35 @@ function App() {
     }
   };
 
-  // A função fetchGeoLocation foi movida para fora do useEffect e envolvida em useCallback
+  // NOVA FUNÇÃO: Usa uma API de IP para obter a localização
   const fetchGeoLocation = useCallback(async () => {
-    if (navigator.geolocation) {
-      setLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const response = await axios.get(`${API_URL}/coords?lat=${position.coords.latitude}&lon=${position.coords.longitude}`);
-            setWeatherData(response.data);
-            setCity(response.data.current.name);
-            checkDayTime(response.data.current.dt, response.data.current.timezone);
-            setCoords({
-              lat: response.data.current.coord.lat,
-              lon: response.data.current.coord.lon
-            });
-          } catch (err) {
-            setError('Não foi possível obter sua localização. Por favor, tente buscar uma cidade.');
-            setLoading(false);
-          }
-        },
-        () => {
-          setError('Permissão de geolocalização negada. Por favor, tente buscar uma cidade.');
-          setLoading(false);
-        }
-      );
-    } else {
-      setError('Geolocalização não é suportada pelo seu navegador.');
-    }
-  }, [API_URL]); // Agora ela depende da API_URL
+    setLoading(true);
+    setError('');
+    setWeatherData(null);
+    setCoords(null);
+    try {
+      // Faz a requisição para a API de geolocalização por IP
+      const geoResponse = await axios.get('https://ipapi.co/json/');
 
-  // O useEffect agora só chama a função
+      const { latitude, longitude, city: ipCity } = geoResponse.data;
+
+      // Chama o backend com as coordenadas obtidas
+      const response = await axios.get(`${API_URL}/coords?lat=${latitude}&lon=${longitude}`);
+
+      setWeatherData(response.data);
+      setCity(ipCity); // Define a cidade a partir da resposta da API de IP
+      checkDayTime(response.data.current.dt, response.data.current.timezone);
+      setCoords({ lat: latitude, lon: longitude });
+
+    } catch (err) {
+      setError('Não foi possível obter sua localização automaticamente. Tente buscar uma cidade.');
+      setLoading(false);
+    }
+  }, [API_URL]);
+
   useEffect(() => {
     fetchGeoLocation();
-  }, [fetchGeoLocation]); // E o useEffect agora depende de fetchGeoLocation
+  }, [fetchGeoLocation]);
 
   const checkDayTime = (timestamp, timezone) => {
     const date = new Date((timestamp + timezone) * 1000);
@@ -115,11 +109,7 @@ function App() {
         </div>
       )}
 
-      {error && !loading && (
-        <div className="error-container">
-          <p className="error">{error}</p>
-        </div>
-      )}
+      {error && !loading && <p className="error">{error}</p>}
 
       {weatherData && !loading && (
         <div className="weather-data">
