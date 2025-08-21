@@ -15,7 +15,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding: 20px;
-  background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+  background: linear-gradient(135deg, #0143ae, #006593);
   color: #333;
   transition: background-color 0.5s ease-in-out;
 }
