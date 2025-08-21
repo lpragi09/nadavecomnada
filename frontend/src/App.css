@@ -4,8 +4,9 @@
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background-color: #f0f2f5;
-  color: #333;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  transition: background-color 0.5s ease;
 }
 
 .app-container {
@@ -15,9 +16,34 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding: 20px;
-  background: linear-gradient(135deg, #0143ae, #006593);
-  color: #333;
-  transition: background-color 0.5s ease-in-out;
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: #ecf0f1;
+}
+
+/* Fundo dinâmico para diferentes climas */
+.weather-clear {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.weather-clouds {
+  background: linear-gradient(135deg, #7f8c8d, #bdc3c7);
+}
+
+.weather-rain {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+}
+
+.weather-thunderstorm {
+  background: linear-gradient(135deg, #2c3e50, #1c2833);
+}
+
+.weather-snow {
+  background: linear-gradient(135deg, #bdc3c7, #ecf0f1);
+  color: #34495e;
+}
+
+.weather-default {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
 }
 
 .weather-search h1 {
@@ -39,17 +65,26 @@ body {
   border-radius: 30px;
   width: 250px;
   font-size: 1em;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #333;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
   outline: none;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s;
+}
+
+.weather-search input::placeholder {
+  color: #ccc;
+}
+
+.weather-search input:focus {
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 .weather-search button {
   padding: 12px 25px;
   border: none;
   border-radius: 30px;
-  background-color: #2196f3;
+  background-color: #3498db;
   color: white;
   font-weight: 500;
   cursor: pointer;
@@ -58,20 +93,21 @@ body {
 }
 
 .weather-search button:hover {
-  background-color: #1976d2;
+  background-color: #2980b9;
   transform: translateY(-2px);
 }
 
 .weather-data {
   margin-top: 30px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(0, 0, 0, 0.4);
   padding: 30px;
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 650px;
-  color: #333;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .current-weather h2 {
@@ -84,14 +120,14 @@ body {
   font-size: 5em;
   font-weight: 300;
   margin: 10px 0;
-  color: #2196f3;
+  color: #fff;
 }
 
 .current-weather .description {
   font-size: 1.2em;
   margin-bottom: 20px;
   text-transform: capitalize;
-  color: #666;
+  color: #ccc;
 }
 
 .details-grid {
@@ -103,7 +139,7 @@ body {
 }
 
 .details-grid div {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
   padding: 15px;
   border-radius: 10px;
 }
@@ -130,11 +166,11 @@ body {
 }
 
 .forecast-card {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.1);
   padding: 15px;
   border-radius: 15px;
   width: 110px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
 }
 
@@ -153,7 +189,7 @@ body {
   max-width: 650px;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
 }
 
 .geolocation-button {
@@ -161,7 +197,7 @@ body {
   padding: 12px 25px;
   border: none;
   border-radius: 30px;
-  background-color: #4caf50;
+  background-color: #2ecc71;
   color: white;
   font-weight: 500;
   cursor: pointer;
@@ -170,7 +206,7 @@ body {
 }
 
 .geolocation-button:hover {
-  background-color: #43a047;
+  background-color: #27ae60;
   transform: translateY(-2px);
 }
 

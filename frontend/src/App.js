@@ -8,7 +8,6 @@ function App() {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isDayTime, setIsDayTime] = useState(true);
   const [coords, setCoords] = useState(null);
 
   const API_URL = 'https://nadavecomnada.onrender.com/weather/full'; // A URL do seu backend no Render
@@ -22,7 +21,6 @@ function App() {
     try {
       const response = await axios.get(`${API_URL}/${cityName}`);
       setWeatherData(response.data);
-      checkDayTime(response.data.current.dt, response.data.current.timezone);
       setCoords({
         lat: response.data.current.coord.lat,
         lon: response.data.current.coord.lon
@@ -34,26 +32,21 @@ function App() {
     }
   };
 
-  // NOVA FUNÇÃO: Usa uma API de IP para obter a localização
   const fetchGeoLocation = useCallback(async () => {
     setLoading(true);
     setError('');
     setWeatherData(null);
     setCoords(null);
     try {
-      // Faz a requisição para a API de geolocalização por IP
       const geoResponse = await axios.get('https://ipapi.co/json/');
-
       const { latitude, longitude, city: ipCity } = geoResponse.data;
-
-      // Chama o backend com o nome da cidade obtida do IP
+      
       const response = await axios.get(`${API_URL}/${ipCity}`);
-
+      
       setWeatherData(response.data);
-      setCity(ipCity); // Define a cidade a partir da resposta da API de IP
-      checkDayTime(response.data.current.dt, response.data.current.timezone);
+      setCity(ipCity);
       setCoords({ lat: latitude, lon: longitude });
-
+      
     } catch (err) {
       setError('Não foi possível obter sua localização automaticamente. Tente buscar uma cidade.');
       setLoading(false);
@@ -64,31 +57,46 @@ function App() {
     fetchGeoLocation();
   }, [fetchGeoLocation]);
 
-  const checkDayTime = (timestamp, timezone) => {
-    const date = new Date((timestamp + timezone) * 1000);
-    const hour = date.getUTCHours();
-    setIsDayTime(hour > 6 && hour < 18);
-  };
-
   const getForecastForNextDays = (forecastList) => {
     const dailyForecasts = [];
     const uniqueDays = new Set();
-
+  
     for (const item of forecastList) {
       const date = new Date(item.dt * 1000);
       const day = date.getDate();
-
+  
       if (uniqueDays.size < 5 && !uniqueDays.has(day)) {
         uniqueDays.add(day);
         dailyForecasts.push(item);
       }
     }
-
+  
     return dailyForecasts;
   };
 
+  const getWeatherTheme = () => {
+    if (!weatherData) return 'weather-default';
+    const mainWeather = weatherData.current.weather[0].main.toLowerCase();
+    switch (mainWeather) {
+      case 'clear':
+        return 'weather-clear';
+      case 'clouds':
+        return 'weather-clouds';
+      case 'rain':
+        return 'weather-rain';
+      case 'drizzle':
+        return 'weather-rain';
+      case 'thunderstorm':
+        return 'weather-thunderstorm';
+      case 'snow':
+        return 'weather-snow';
+      default:
+        return 'weather-default';
+    }
+  };
+
   return (
-    <div className={`app-container ${isDayTime ? 'day-theme' : 'night-theme'}`}>
+    <div className={`app-container ${getWeatherTheme()}`}>
       <div className="weather-search">
         <h1>Previsão do Tempo</h1>
         <form onSubmit={(e) => { e.preventDefault(); fetchWeather(city); }}>
