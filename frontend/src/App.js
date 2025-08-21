@@ -8,9 +8,10 @@ function App() {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isDayTime, setIsDayTime] = useState(true);
   const [coords, setCoords] = useState(null);
 
-  const API_URL = 'https://nadavecomnada.onrender.com/weather/full'; // A URL do seu backend no Render
+  const API_URL = 'https://nadavecomnada.onrender.com/weather/full';
 
   const fetchWeather = async (cityName) => {
     setLoading(true);
@@ -21,6 +22,7 @@ function App() {
     try {
       const response = await axios.get(`${API_URL}/${cityName}`);
       setWeatherData(response.data);
+      checkDayTime(response.data.current.dt, response.data.current.timezone);
       setCoords({
         lat: response.data.current.coord.lat,
         lon: response.data.current.coord.lon
@@ -39,12 +41,14 @@ function App() {
     setCoords(null);
     try {
       const geoResponse = await axios.get('https://ipapi.co/json/');
+      
       const { latitude, longitude, city: ipCity } = geoResponse.data;
       
       const response = await axios.get(`${API_URL}/${ipCity}`);
       
       setWeatherData(response.data);
       setCity(ipCity);
+      checkDayTime(response.data.current.dt, response.data.current.timezone);
       setCoords({ lat: latitude, lon: longitude });
       
     } catch (err) {
@@ -56,6 +60,12 @@ function App() {
   useEffect(() => {
     fetchGeoLocation();
   }, [fetchGeoLocation]);
+
+  const checkDayTime = (timestamp, timezone) => {
+    const date = new Date((timestamp + timezone) * 1000);
+    const hour = date.getUTCHours();
+    setIsDayTime(hour > 6 && hour < 18);
+  };
 
   const getForecastForNextDays = (forecastList) => {
     const dailyForecasts = [];
@@ -124,10 +134,10 @@ function App() {
           {/* Dados do clima atual */}
           <div className="current-weather">
             <h2>{weatherData.current.name}, {weatherData.current.sys.country}</h2>
-            <p className="temperature">{weatherData.current.main.temp}°C</p>
+            <p className="temperature">{weatherData.current.main.temp.toFixed(0)}°C</p>
             <p className="description">{weatherData.current.weather[0].description}</p>
             <div className="details-grid">
-              <div><p>Sensação térmica:</p> <p>{weatherData.current.main.feels_like}°C</p></div>
+              <div><p>Sensação térmica:</p> <p>{weatherData.current.main.feels_like.toFixed(0)}°C</p></div>
               <div><p>Umidade:</p> <p>{weatherData.current.main.humidity}%</p></div>
               <div><p>Vento:</p> <p>{weatherData.current.wind.speed} m/s</p></div>
               <div><p>Pressão:</p> <p>{weatherData.current.main.pressure} hPa</p></div>
