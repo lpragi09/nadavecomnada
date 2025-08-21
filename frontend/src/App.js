@@ -8,10 +8,9 @@ function App() {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isDayTime, setIsDayTime] = useState(true);
   const [coords, setCoords] = useState(null);
 
-  const API_URL = 'https://nadavecomnada.onrender.com/weather/full';
+  const API_URL = 'https://nadavecomnada.onrender.com/weather/full'; // A URL do seu backend no Render
 
   const fetchWeather = async (cityName) => {
     setLoading(true);
@@ -22,7 +21,6 @@ function App() {
     try {
       const response = await axios.get(`${API_URL}/${cityName}`);
       setWeatherData(response.data);
-      checkDayTime(response.data.current.dt, response.data.current.timezone);
       setCoords({
         lat: response.data.current.coord.lat,
         lon: response.data.current.coord.lon
@@ -34,6 +32,7 @@ function App() {
     }
   };
 
+  // NOVA FUNÇÃO: Usa uma API de IP para obter a localização
   const fetchGeoLocation = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -48,7 +47,6 @@ function App() {
       
       setWeatherData(response.data);
       setCity(ipCity);
-      checkDayTime(response.data.current.dt, response.data.current.timezone);
       setCoords({ lat: latitude, lon: longitude });
       
     } catch (err) {
@@ -60,12 +58,6 @@ function App() {
   useEffect(() => {
     fetchGeoLocation();
   }, [fetchGeoLocation]);
-
-  const checkDayTime = (timestamp, timezone) => {
-    const date = new Date((timestamp + timezone) * 1000);
-    const hour = date.getUTCHours();
-    setIsDayTime(hour > 6 && hour < 18);
-  };
 
   const getForecastForNextDays = (forecastList) => {
     const dailyForecasts = [];
