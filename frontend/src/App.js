@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Weather from './components/Weather';
-import News from './components/News'; // aaaaaaaaaaa
-import Radar from './components/Radar';
+import Weather from './components/components/Weather';
+import News from './components/components/News';
+import Radar from './components/components/Radar';
 import './App.css';
 
 function App() {
@@ -97,7 +97,6 @@ function App() {
               setCity={setCity}
               fetchWeather={fetchWeather}
               fetchGeoLocation={fetchGeoLocation}
-              coords={coords}
             />} />
             <Route path="/noticias" element={<News />} />
             <Route path="/radar" element={<Radar coords={coords} />} />
