@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import Navbar from 'C:\Users\pauli\clone climatempo\nadavecomnada\frontend\src\components\Navbar.js';
 import Weather from './components/Weather';
 import News from './components/News';
 import Radar from './components/Radar';
