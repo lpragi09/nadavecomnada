@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Weather from './components/components/Weather';
-import News from './components/components/News';
-import Radar from './components/components/Radar';
+import Weather from './components/Weather';
+import News from './components/News';
+import Radar from './components/Radar';
 import './App.css';
 
 function App() {
